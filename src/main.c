@@ -31,7 +31,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine, int nCmdShow)
 {
 	LPCSTR message;
-	char profilepath[250];
+	LPCSTR profilepath[250];
 	ExpandEnvironmentStrings("%USERPROFILE%", profilepath, 250);
 
 	shExInfo.cbSize = sizeof(shExInfo);
@@ -39,7 +39,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	shExInfo.hwnd = 0; // Handle
 	shExInfo.lpVerb = "open"; // Action to preform
 	shExInfo.lpFile = "cmd.exe"; // Application to open
-	shExInfo.lpDirectory = (LPCSTR)profilepath; // Application current directory
+	shExInfo.lpDirectory = profilepath; // Application current directory
 	shExInfo.nShow = SW_SHOW; // Show application
 
 	if (IsWindows7OrGreater()) // The MOD_NOREPEAT flag is supported on Windows 7+
