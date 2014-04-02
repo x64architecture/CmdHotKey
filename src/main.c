@@ -30,8 +30,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine, int nCmdShow)
 {
 	LPCSTR message;
-	LPCSTR profilepath[250];
-	ExpandEnvironmentStrings("%USERPROFILE%", profilepath, 250);
+	LPSTR profilepath;
+	ExpandEnvironmentStrings("%USERPROFILE%", profilepath, MAX_PATH);
 
 	shExInfo.cbSize = sizeof(shExInfo);
 	shExInfo.fMask = SEE_MASK_DEFAULT;
