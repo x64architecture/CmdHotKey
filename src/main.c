@@ -13,6 +13,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 OSVERSIONINFO osvi;
 SHELLEXECUTEINFO shExInfo = { 0 };
 MSG msg;
+LPCSTR message;
 
 BOOL IsWindows7OrGreater()
 {
@@ -26,33 +27,38 @@ BOOL IsWindows7OrGreater()
 		((osvi.dwMajorVersion == 6) && (osvi.dwMinorVersion >= 1)));
 }
 
+int SUPPORTS_NOREPEAT()
+{
+	// The MOD_NOREPEAT flag is supported on Windows 7+
+	if (IsWindows7OrGreater())
+	{
+		message = "HotKey 'CTRL+ALT+T (Start CMD), CTRL+ALT+Q (Quit)' registered, using MOD_NOREPEAT flag.\n";
+		return MOD_NOREPEAT;
+	}
+	else
+	{
+		message = "HotKey 'CTRL+ALT+T (Start CMD), CTRL+ALT+Q (Quit)' registered.\n";
+		return 0;
+	}
+}
+
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine, int nCmdShow)
 {
-	LPCSTR message;
-	LPSTR profilepath;
-	ExpandEnvironmentStrings("%USERPROFILE%", profilepath, MAX_PATH);
+	LPSTR profilepath[260];
+	ExpandEnvironmentStrings("%USERPROFILE%", (LPSTR)profilepath, MAX_PATH);
 
 	shExInfo.cbSize = sizeof(shExInfo);
 	shExInfo.fMask = SEE_MASK_DEFAULT;
 	shExInfo.hwnd = 0; // Handle
 	shExInfo.lpVerb = "open"; // Action to preform
 	shExInfo.lpFile = "cmd.exe"; // Application to open
-	shExInfo.lpDirectory = profilepath; // Application current directory
+	shExInfo.lpDirectory = (LPCSTR)profilepath; // Application current directory
 	shExInfo.nShow = SW_SHOW; // Show application
-
-	if (IsWindows7OrGreater()) // The MOD_NOREPEAT flag is supported on Windows 7+
-	{
-		RegisterHotKey(NULL, 1, MOD_CONTROL | MOD_ALT | MOD_NOREPEAT, 0x54); // 0x54 = T key
-		RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_ALT | MOD_NOREPEAT, 0x51); // 0x51 = Q key
-		message = "HotKey 'CTRL+ALT+T (Start CMD), CTRL+ALT+Q (Quit)' registered, using MOD_NOREPEAT flag.\n";
-	}
-	else
-	{
-		RegisterHotKey(NULL, 1, MOD_CONTROL | MOD_ALT, 0x54); // 0x54 = T key
-		RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_ALT, 0x51); // 0x51 = Q key
-		message = "HotKey 'CTRL+ALT+T (Start CMD), CTRL+ALT+Q (Quit)' registered.\n";
-	}
+	
+	RegisterHotKey(NULL, 1, MOD_CONTROL | MOD_ALT | SUPPORTS_NOREPEAT(), 0x54); // 0x54 = T key
+	RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_ALT | SUPPORTS_NOREPEAT(), 0x51); // 0x51 = Q key
+	
 	MessageBox(NULL,
 		message,
 		(LPCSTR)"Notice",
