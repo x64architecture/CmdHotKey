@@ -45,7 +45,7 @@ int SUPPORTS_NOREPEAT()
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine, int nCmdShow)
 {
-	LPSTR profilepath[260];
+	LPSTR profilepath[MAX_PATH];
 	ExpandEnvironmentStrings("%USERPROFILE%", (LPSTR)profilepath, MAX_PATH);
 
 	shExInfo.cbSize = sizeof(shExInfo);
